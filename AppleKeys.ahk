@@ -13,12 +13,16 @@
 ; - magnet-like window snapping (CTRL+ALT+Arrow, CTRL+ALT+ENTER)
 ; - other
 
+; Autostart: C:\Users\%username%\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup
+
 
 #NoEnv  ; Recommended for performance and compatibility with future AutoHotkey releases.
 SendMode Input  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 
-
+; =====================
+; CapsLock to switch layout
+CapsLock::Send {alt down}{shift down}{shift up}{alt up}
 
 ; =====================
 ; 1. clipboard
@@ -204,3 +208,63 @@ If (Virtualscreenwidth = A_ScreenWidth) {
 }
 Return
 
+; =====================
+; russian layout
+SC002::Send 1
++SC002::Send {U+0021}
+SC003::Send 2
++SC003::CheckRus("{U+0022}","@") ; "
+SC004::Send 3
++SC004::CheckRus("№","{U+0023}") ; #
+SC005::Send 4
++SC005::CheckRus("%","$")
+SC006::Send 5
++SC006::CheckRus(":","%")
+SC007::Send 6
++SC007::CheckRus(",","{U+005E}") ; ^
+SC008::Send 7
++SC008::CheckRus(".","&")
+SC009::Send 8
++SC009::CheckRus(";","*")
+SC00A::Send 9
++SC00A::Send (
+SC00B::Send 0
++SC00B::Send )
+SC00C::Send -
++SC00C::Send _
+SC00D::Send {U+003D} ; =
++SC00D::Send {U+002B} ; +
+SC035::Send /
++SC035::Send ?
+SC02B::CheckRus("{U+0451}","\") ; ё
++SC02B::CheckRus("{U+0401}","|") ; Ё
+SC029::CheckRus(">","{U+00A7}") ; §
++SC029::CheckRus("<","{U+00B1}") ; ±
+SC056::CheckRus("]","{U+0060}") ; `
++SC056::CheckRus("[","{U+007E}") ; ~
+
+;F7::
+;    SetFormat, Integer, H
+;    WinGet, WinID,, A
+;    ThreadID:=DllCall("GetWindowThreadProcessId", "Int", WinID, "Int", 0)
+;    InputLocaleID:=DllCall("GetKeyboardLayout", "Int", ThreadID)
+;	MsgBox, % InputLocaleID
+;Return
+
+
+CheckRus(rus,eng)
+{
+    SetFormat, Integer, H
+    WinGet, WinID,, A
+    ThreadID:=DllCall("GetWindowThreadProcessId", "Int", WinID, "Int", 0)
+    InputLocaleID:=DllCall("GetKeyboardLayout", "Int", ThreadID)
+    if(InputLocaleID == "-0xFF7FBE7")
+    {
+        Send %rus%
+    }
+        if(InputLocaleId == "-0xFFEFBF7")
+    {
+        Send %eng%
+    }
+    Return
+}
